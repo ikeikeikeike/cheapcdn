@@ -1,9 +1,7 @@
-package authproxy
+package lib
 
 import (
-	"crypto/aes"
 	"crypto/cipher"
-	"fmt"
 )
 
 var (
@@ -27,13 +25,4 @@ func DecryptAES(data string) []byte {
 
 	cipher.NewCFBDecrypter(aesBlock, aesCommonIV).XORKeyStream(dst, src)
 	return dst
-}
-
-// Load configuration instead of context.
-func Load(salt string) {
-	var err error
-	aesBlock, err = aes.NewCipher([]byte(salt))
-	if err != nil {
-		panic(fmt.Sprintf("Error: NewCipher(%d bytes) = %s", len(salt), err))
-	}
 }

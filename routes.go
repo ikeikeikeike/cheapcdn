@@ -12,8 +12,8 @@ func routes() *echo.Echo {
 	e.Use(md.Logger())
 	e.Use(md.Recover())
 	e.Use(md.LoggerWithConfig(md.LoggerConfig{
-		Skipper: func(c echo.Context) bool {
-			if strings.HasPrefix(c.Request().Host, "localhost") {
+		Skipper: func(ctx echo.Context) bool {
+			if strings.HasPrefix(ctx.Request().Host, "localhost") {
 				return true
 			}
 			return false
