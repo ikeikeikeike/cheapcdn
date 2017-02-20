@@ -36,34 +36,24 @@ func keyAuth() echo.MiddlewareFunc {
 // _, b := ctx.(*lib.CacheContext).Store.Get(key)
 // if !b { return false }
 func validator(ctx echo.Context, key string) bool {
-	var m map[string]string
+	var st struct {
+		File string `json:"f"`
+		IP   string `json:"i"`
+		Time string `json:"t"`
+	}
 
 	bytes := lib.DecryptAexHex(key)
-	if err := json.Unmarshal(bytes, &m); err != nil {
+	if err := json.Unmarshal(bytes, &st); err != nil {
 		return false
 	}
 
-	name, ok := m["f"]
-	if !ok {
+	if st.File != filepath.Base(ctx.Request().URL.Path) {
 		return false
 	}
-	if name != filepath.Base(ctx.Request().URL.Path) {
+	if st.IP != ctx.RealIP() {
 		return false
 	}
-
-	ip, ok := m["i"]
-	if !ok {
-		return false
-	}
-	if ip != ctx.RealIP() {
-		return false
-	}
-
-	tf, ok := m["t"]
-	if !ok {
-		return false
-	}
-	t1, err := time.Parse(lib.TF, tf)
+	t1, err := time.Parse(lib.TF, st.Time)
 	if err != nil {
 		return false
 	}
