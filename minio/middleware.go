@@ -16,6 +16,14 @@ const (
 	parameter  = "cheapkey"
 )
 
+type (
+	validation struct {
+		File string `json:"f"`
+		IP   string `json:"i"`
+		Time string `json:"t"`
+	}
+)
+
 func keyAuth() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
@@ -36,24 +44,20 @@ func keyAuth() echo.MiddlewareFunc {
 // _, b := ctx.(*lib.CacheContext).Store.Get(key)
 // if !b { return false }
 func validator(ctx echo.Context, key string) bool {
-	var st struct {
-		File string `json:"f"`
-		IP   string `json:"i"`
-		Time string `json:"t"`
-	}
+	var vs *validation
 
 	bytes := lib.DecryptAexHex(key)
-	if err := json.Unmarshal(bytes, &st); err != nil {
+	if err := json.Unmarshal(bytes, &vs); err != nil {
 		return false
 	}
 
-	if st.File != filepath.Base(ctx.Request().URL.Path) {
+	if vs.File != filepath.Base(ctx.Request().URL.Path) {
 		return false
 	}
-	if st.IP != ctx.RealIP() {
+	if vs.IP != ctx.RealIP() {
 		return false
 	}
-	t1, err := time.Parse(lib.TF, st.Time)
+	t1, err := time.Parse(lib.TF, vs.Time)
 	if err != nil {
 		return false
 	}
