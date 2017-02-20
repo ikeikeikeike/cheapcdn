@@ -1,7 +1,9 @@
 package gateway
 
 import (
+	"crypto/rand"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -11,6 +13,7 @@ import (
 
 var (
 	h403    = http.StatusBadRequest
+	rbyte   = make([]byte, 1)
 	timeFmt = "20060102T150405Z"
 )
 
@@ -23,9 +26,12 @@ type (
 )
 
 func (o *Object) buildToken(ctx echo.Context) (string, error) {
+	rand.Read(rbyte)
+
 	m := map[string]string{
 		"i": ctx.RealIP(),
 		"t": time.Now().UTC().Format(timeFmt),
+		"_": fmt.Sprintf("%x", rbyte),
 	}
 	if o.Object != "" {
 		m["f"] = o.Object
