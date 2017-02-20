@@ -1,8 +1,11 @@
 package minio
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
+	"path/filepath"
+	"time"
 
 	"github.com/ikeikeikeike/cheapcdn/lib"
 	"github.com/labstack/echo"
@@ -30,14 +33,44 @@ func keyAuth() echo.MiddlewareFunc {
 	}
 }
 
+// _, b := ctx.(*lib.CacheContext).Store.Get(key)
+// if !b { return false }
 func validator(ctx echo.Context, key string) bool {
-	_, b := ctx.(*lib.CacheContext).Store.Get(key)
-	if !b {
+	var m map[string]string
+
+	bytes := lib.DecryptAexHex(key)
+	if err := json.Unmarshal(bytes, &m); err != nil {
 		return false
 	}
 
-	// ip, _, _ := net.SplitHostPort(r.RemoteAddr)
-	// jsonstr.
+	name, ok := m["f"]
+	if !ok {
+		return false
+	}
+	if name != filepath.Base(ctx.Request().URL.Path) {
+		return false
+	}
+
+	ip, ok := m["i"]
+	if !ok {
+		return false
+	}
+	if ip != ctx.RealIP() {
+		return false
+	}
+
+	tf, ok := m["t"]
+	if !ok {
+		return false
+	}
+	t1, err := time.Parse(lib.TF, tf)
+	if err != nil {
+		return false
+	}
+	t2 := time.Now().UTC()
+	if t1.Add(1*time.Hour).UnixNano() < t2.UnixNano() {
+		return false
+	}
 
 	return true
 }

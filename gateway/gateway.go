@@ -12,9 +12,8 @@ import (
 )
 
 var (
-	h403    = http.StatusBadRequest
-	rbyte   = make([]byte, 1)
-	timeFmt = "20060102T150405Z"
+	h403  = http.StatusBadRequest
+	rbyte = make([]byte, 1)
 )
 
 type (
@@ -30,7 +29,7 @@ func (o *Object) buildToken(ctx echo.Context) (string, error) {
 
 	m := map[string]string{
 		"i": ctx.RealIP(),
-		"t": time.Now().UTC().Format(timeFmt),
+		"t": time.Now().UTC().Format(lib.TF),
 		"_": fmt.Sprintf("%x", rbyte),
 	}
 	if o.Object != "" {
@@ -42,7 +41,7 @@ func (o *Object) buildToken(ctx echo.Context) (string, error) {
 		return "", err
 	}
 
-	return string(lib.EncryptAexHex(data)), nil
+	return lib.EncryptAexHex(data), nil
 }
 
 func gateway(ctx echo.Context) (err error) {

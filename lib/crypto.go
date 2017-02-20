@@ -11,31 +11,20 @@ var (
 )
 
 // EncryptAexHex encodes string to decoded.
-func EncryptAexHex(src []byte) []byte {
-	edst := make([]byte, len(src))
-	cipher.NewCFBEncrypter(aesBlock, aesCommonIV).XORKeyStream(edst, src)
-
-	hdst := make([]byte, hex.EncodedLen(len(edst)))
-	hex.Encode(hdst, src)
-	return hdst
-}
-
-// EncryptStringAexHex encodes string to decoded.
-func EncryptStringAexHex(data string) string {
-	src := []byte(data)
+func EncryptAexHex(src []byte) string {
 	dst := make([]byte, len(src))
 
 	cipher.NewCFBEncrypter(aesBlock, aesCommonIV).XORKeyStream(dst, src)
 	return hex.EncodeToString(dst)
 }
 
-// DecryptStringAexHex decodes decoded string
-func DecryptStringAexHex(data string) string {
+// DecryptAexHex decodes decoded string
+func DecryptAexHex(data string) []byte {
 	dec, _ := hex.DecodeString(data)
 
 	src := []byte(dec)
 	dst := make([]byte, len(src))
 
 	cipher.NewCFBDecrypter(aesBlock, aesCommonIV).XORKeyStream(dst, src)
-	return string(dst)
+	return dst
 }
