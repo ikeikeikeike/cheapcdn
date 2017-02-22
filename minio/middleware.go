@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/ikeikeikeike/cheapcdn/lib"
@@ -13,7 +14,7 @@ import (
 
 const (
 	authScheme = "Bearer"
-	parameter  = "authtoken"
+	parameter  = "cdnkey"
 )
 
 type (
@@ -56,7 +57,7 @@ func validator(ctx echo.Context, key string) bool {
 		return false
 	}
 
-	if vs.File != filepath.Base(ctx.Request().URL.Path) {
+	if strings.HasSuffix(vs.File, filepath.Base(ctx.Request().URL.Path)) {
 		return false
 	}
 	if vs.IP != ctx.RealIP() {
@@ -75,12 +76,12 @@ func validator(ctx echo.Context, key string) bool {
 }
 
 func extractor(ctx echo.Context) (string, error) {
-	token, err := extractHeader(ctx)
-	if err == nil {
-		return token, nil
-	}
+	// token, err := extractHeader(ctx)
+	// if err == nil {
+	// return token, nil
+	// }
 
-	token, err = extractParam(ctx)
+	token, err := extractParam(ctx)
 	if err == nil {
 		return token, nil
 	}
