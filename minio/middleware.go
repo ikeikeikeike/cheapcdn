@@ -13,7 +13,7 @@ import (
 
 const (
 	authScheme = "Bearer"
-	parameter  = "cheapkey"
+	parameter  = "authtoken"
 )
 
 type (
@@ -27,6 +27,11 @@ type (
 func keyAuth() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
+			switch ctx.Request().Method {
+			case "POST", "PUT":
+				return next(ctx)
+			}
+
 			// Extract and verify key
 			key, err := extractor(ctx)
 			if err != nil {
@@ -90,7 +95,6 @@ func extractHeader(ctx echo.Context) (string, error) {
 	}
 
 	length := len(authScheme)
-
 	if len(auth) > length+1 && auth[:length] == authScheme {
 		ctx.Request().Header.Del(echo.HeaderAuthorization)
 		return auth[length+1:], nil
