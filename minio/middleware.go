@@ -57,7 +57,7 @@ func validator(ctx echo.Context, key string) bool {
 		return false
 	}
 
-	if strings.HasSuffix(vs.File, filepath.Base(ctx.Request().URL.Path)) {
+	if !strings.HasSuffix(vs.File, filepath.Base(ctx.Request().URL.Path)) {
 		return false
 	}
 	if vs.IP != ctx.RealIP() {
