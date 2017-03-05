@@ -4,12 +4,11 @@ import (
 	"flag"
 	"fmt"
 
+	einhorn "github.com/dcu/http-einhorn"
 	"github.com/ikeikeikeike/cheapcdn/config"
 	"github.com/ikeikeikeike/cheapcdn/gateway"
 	"github.com/ikeikeikeike/cheapcdn/lib"
 	"github.com/ikeikeikeike/cheapcdn/minio"
-
-	"github.com/facebookgo/grace/gracehttp"
 )
 
 var cfg = &config.Config{
@@ -33,5 +32,10 @@ func main() {
 	minio.Routes(e)
 
 	e.Server.Addr = fmt.Sprintf(cfg.SrcHost())
-	e.Logger.Fatal(gracehttp.Serve(e.Server))
+
+	if einhorn.IsRunning() {
+		einhorn.Run(e.Server, 0)
+	} else {
+		e.StartServer(e.Server)
+	}
 }
