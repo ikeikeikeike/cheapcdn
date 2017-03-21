@@ -9,18 +9,26 @@ import (
 	"github.com/ikeikeikeike/cheapcdn/gateway"
 	"github.com/ikeikeikeike/cheapcdn/lib"
 	"github.com/ikeikeikeike/cheapcdn/minio"
+	"github.com/k0kubun/pp"
 )
 
-var cfg = &config.Config{
-	Src:         *flag.String("src", "http://127.0.0.1:8888", "URL for own host"),
-	Dest:        *flag.String("dest", "http://127.0.0.1:9000", "URL for proxy server"),
-	AESSalt:     *flag.String("salt", "openunk-default-ses-saltown;pike", "ses salt"),
-	GatewayUser: *flag.String("user", "user", "Set auth's username for issues apikey"),
-	GatewayPass: *flag.String("pass", "pass", "Set auth's password for issues apikey"),
-}
+var (
+	src  = flag.String("src", "http://127.0.0.1:8888", "URL for own host")
+	dest = flag.String("dest", "http://127.0.0.1:9000", "URL for proxy server")
+	salt = flag.String("salt", "openunk-default-ses-saltown;pike", "ses salt")
+	user = flag.String("user", "user", "Set auth's username for issues apikey")
+	pass = flag.String("pass", "pass", "Set auth's password for issues apikey")
+)
 
 func main() {
 	flag.Parse()
+	cfg := &config.Config{
+		Src:         *src,
+		Dest:        *dest,
+		AESSalt:     *salt,
+		GatewayUser: *user,
+		GatewayPass: *pass,
+	}
 
 	lib.Load(cfg)
 	gateway.Load(cfg)
@@ -31,6 +39,7 @@ func main() {
 	gateway.Routes(e)
 	minio.Routes(e)
 
+	pp.Println(cfg)
 	e.Server.Addr = fmt.Sprintf(cfg.SrcHost())
 
 	if einhorn.IsRunning() {
