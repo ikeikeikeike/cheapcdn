@@ -9,7 +9,6 @@ import (
 	"github.com/ikeikeikeike/cheapcdn/gateway"
 	"github.com/ikeikeikeike/cheapcdn/lib"
 	"github.com/ikeikeikeike/cheapcdn/minio"
-	"github.com/k0kubun/pp"
 )
 
 var (
@@ -39,7 +38,6 @@ func main() {
 	gateway.Routes(e)
 	minio.Routes(e)
 
-	pp.Println(cfg)
 	e.Server.Addr = fmt.Sprintf(cfg.SrcHost())
 
 	if einhorn.IsRunning() {
