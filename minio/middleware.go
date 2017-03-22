@@ -29,7 +29,7 @@ func keyAuth() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			switch ctx.Request().Method {
-			case "POST", "PUT":
+			case "POST", "PUT", "DELETE":
 				return next(ctx)
 			}
 
