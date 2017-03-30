@@ -19,9 +19,9 @@ const (
 
 type (
 	validation struct {
-		File string `json:"f"`
-		IP   string `json:"i"`
-		Time string `json:"t"`
+		File   string `json:"f"`
+		IPAddr string `json:"i"`
+		Time   string `json:"t"`
 	}
 )
 
@@ -60,7 +60,7 @@ func validator(ctx echo.Context, key string) bool {
 	if !strings.HasSuffix(vs.File, filepath.Base(ctx.Request().URL.Path)) {
 		return false
 	}
-	if vs.IP != ctx.RealIP() {
+	if vs.IPAddr != ctx.RealIP() {
 		return false
 	}
 	t1, err := time.Parse(lib.TF, vs.Time)

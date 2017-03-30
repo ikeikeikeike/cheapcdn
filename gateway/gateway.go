@@ -21,6 +21,7 @@ type (
 	Object struct {
 		Name   string `json:"name" form:"name" query:"name" validate:"required"`
 		Object string `json:"object" form:"object" query:"object"`
+		IPAddr string `json:"ipaddr" form:"ipaddr" query:"ipaddr"`
 	}
 )
 
@@ -34,6 +35,9 @@ func (o *Object) buildToken(ctx echo.Context) (string, error) {
 	}
 	if o.Object != "" {
 		m["f"] = o.Object
+	}
+	if o.IPAddr != "" {
+		m["i"] = o.IPAddr
 	}
 
 	data, err := json.Marshal(m)
