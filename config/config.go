@@ -4,6 +4,7 @@ import "net/url"
 
 // Config defines for configuration
 type Config struct {
+	Nodes       []string  // Launched cheapcdn servers
 	Src         string
 	Dest        string
 	AESSalt     string

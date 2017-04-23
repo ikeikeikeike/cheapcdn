@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/ikeikeikeike/cheapcdn/lib"
+	"github.com/ikeikeikeike/cheapcdn/lib/crc16"
 	"github.com/labstack/echo"
 )
 
@@ -22,6 +23,11 @@ type (
 		Name   string `json:"name" form:"name" query:"name" validate:"required"`
 		Object string `json:"object" form:"object" query:"object"`
 		IPAddr string `json:"ipaddr" form:"ipaddr" query:"ipaddr"`
+	}
+
+	resp struct {
+		Host string `json:"host"`
+		Key  string `json:"key"`
 	}
 )
 
@@ -48,6 +54,11 @@ func (o *Object) buildToken(ctx echo.Context) (string, error) {
 	return lib.EncryptAexHex(data), nil
 }
 
+func (o *Object) host(ctx echo.Context) string {
+	n := crc16.Slot(o.Object, len(cfg.Nodes))
+	return cfg.Nodes[n]
+}
+
 func gateway(ctx echo.Context) (err error) {
 	o := new(Object)
 	if err = ctx.Bind(o); err != nil {
@@ -62,5 +73,8 @@ func gateway(ctx echo.Context) (err error) {
 		return ctx.String(h403, "Bad Request")
 	}
 
-	return ctx.String(http.StatusOK, token)
+	return ctx.JSON(http.StatusOK, &resp{
+		Host: o.host(ctx),
+		Key:  token,
+	})
 }

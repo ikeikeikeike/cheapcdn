@@ -21,7 +21,14 @@ var (
 
 func main() {
 	flag.Parse()
+
+	nodes := flag.Args()
+	if len(nodes) <= 0 {
+		panic("there's nothing nodes")
+	}
+
 	cfg := &config.Config{
+		Nodes:       nodes,
 		Src:         *src,
 		Dest:        *dest,
 		AESSalt:     *salt,
