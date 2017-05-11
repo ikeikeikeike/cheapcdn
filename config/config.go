@@ -1,15 +1,19 @@
 package config
 
-import "net/url"
+import (
+	"database/sql"
+	"net/url"
+)
 
 // Config defines for configuration
 type Config struct {
-	Nodes       []string  // Launched cheapcdn servers
+	Nodes       []string // Launched cheapcdn servers
 	Src         string
 	Dest        string
 	AESSalt     string
 	GatewayUser string
 	GatewayPass string
+	DB          *sql.DB
 }
 
 // SrcHost returns URL host for this proxy.
