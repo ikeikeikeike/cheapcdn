@@ -27,8 +27,10 @@ type (
 )
 
 func (o *Object) buildToken(ctx echo.Context) (string, error) {
-	object, err := models.NewObjectStore(cfg.DB).
-		FindOne(models.NewObjectQuery().FindByName(o.Object).WithNode())
+	q := models.NewObjectQuery().WithNode().
+		Select(models.Schema.Object.NodeFK).
+		FindByName(o.Object)
+	object, err := models.NewObjectStore(cfg.DB).FindOne(q)
 	if err != nil {
 		return "", err
 	}
