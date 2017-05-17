@@ -24,11 +24,6 @@ type (
 		Object string `json:"object" form:"object" query:"object"`
 		IPAddr string `json:"ipaddr" form:"ipaddr" query:"ipaddr"`
 	}
-
-	resp struct {
-		Host string `json:"host"`
-		Key  string `json:"key"`
-	}
 )
 
 func (o *Object) buildToken(ctx echo.Context) (string, error) {

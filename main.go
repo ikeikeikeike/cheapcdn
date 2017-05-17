@@ -18,7 +18,6 @@ var (
 	src  = flag.String("src", "http://127.0.0.1:8888", "URL for own host")
 	salt = flag.String("salt", "openunk-default-ses-saltown;pike", "ses salt")
 	dsn  = flag.String("dsn", "postgres://postgres:@127.0.0.1:5432/cheapcdn?sslmode=disable", "schema db uri")
-	// dsn  = flag.String("dsn", "postgres:@tcp(127.0.0.1:3306)/cheapcdn?parseTime=true", "schema db uri")
 	user = flag.String("user", "user", "Set auth's username for issues apikey")
 	pass = flag.String("pass", "pass", "Set auth's password for issues apikey")
 )
