@@ -16,9 +16,8 @@ import (
 
 var (
 	src  = flag.String("src", "http://127.0.0.1:8888", "URL for own host")
-	dest = flag.String("dest", "http://127.0.0.1:9000", "URL for proxy server")
 	salt = flag.String("salt", "openunk-default-ses-saltown;pike", "ses salt")
-	dsn  = flag.String("dsn", "postgres:@tcp(127.0.0.1:5432)/cheapcdn", "schema db uri")
+	dsn  = flag.String("dsn", "postgres://postgres:@127.0.0.1:5432/cheapcdn?sslmode=disable", "schema db uri")
 	// dsn  = flag.String("dsn", "postgres:@tcp(127.0.0.1:3306)/cheapcdn?parseTime=true", "schema db uri")
 	user = flag.String("user", "user", "Set auth's username for issues apikey")
 	pass = flag.String("pass", "pass", "Set auth's password for issues apikey")
@@ -27,19 +26,13 @@ var (
 func main() {
 	flag.Parse()
 
-	nodes := flag.Args()
-	if len(nodes) <= 0 {
-		panic("there's nothing nodes")
-	}
 	db, err := sql.Open("postgres", *dsn)
 	if err != nil {
 		panic(fmt.Sprintf("It was unable to connect to the DB.\n%s\n", err))
 	}
 
 	cfg := &config.Config{
-		Nodes:       nodes,
 		Src:         *src,
-		Dest:        *dest,
 		AESSalt:     *salt,
 		GatewayUser: *user,
 		GatewayPass: *pass,

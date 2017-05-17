@@ -12,19 +12,6 @@ import (
 	"github.com/labstack/echo"
 )
 
-const (
-	authScheme = "Bearer"
-	parameter  = "cdnkey"
-)
-
-type (
-	validation struct {
-		File   string `json:"f"`
-		IPAddr string `json:"i"`
-		Time   string `json:"t"`
-	}
-)
-
 func keyAuth() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
@@ -50,20 +37,20 @@ func keyAuth() echo.MiddlewareFunc {
 // _, b := ctx.(*lib.CacheContext).Store.Get(key)
 // if !b { return false }
 func validator(ctx echo.Context, key string) bool {
-	var vs *validation
+	var g *gateway
 
 	bytes := lib.DecryptAexHex(key)
-	if err := json.Unmarshal(bytes, &vs); err != nil {
+	if err := json.Unmarshal(bytes, &g); err != nil {
 		return false
 	}
 
-	if !strings.HasSuffix(vs.File, filepath.Base(ctx.Request().URL.Path)) {
+	if !strings.HasSuffix(g.File, filepath.Base(ctx.Request().URL.Path)) {
 		return false
 	}
-	if vs.IPAddr != ctx.RealIP() {
+	if g.IPAddr != ctx.RealIP() {
 		return false
 	}
-	t1, err := time.Parse(lib.TF, vs.Time)
+	t1, err := time.Parse(lib.TF, g.Time)
 	if err != nil {
 		return false
 	}
@@ -105,7 +92,7 @@ func extractHeader(ctx echo.Context) (string, error) {
 }
 
 func extractParam(ctx echo.Context) (string, error) {
-	key := ctx.QueryParam(parameter)
+	key := ctx.QueryParam(authParam)
 	if key == "" {
 		return "", errors.New("Missing token in the query string")
 	}

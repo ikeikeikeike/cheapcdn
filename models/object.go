@@ -8,7 +8,7 @@ type Object struct {
 	kallax.Model `table:"objects"`
 	kallax.Timestamps
 
-	ID   int64 `pk:"autoincr"`
-	Node *Node `fk:"node_id,inverse"`
-	URL  string
+	ID   int64  `pk:"autoincr"`
+	Node *Node  `fk:"node_id,inverse"`
+	Name string `kallax:"name"`
 }

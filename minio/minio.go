@@ -1,26 +1,23 @@
 package minio
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"net/http/httputil"
+
+	"github.com/ikeikeikeike/cheapcdn/lib"
 )
-
-// NewMinoAdminReverseProxy returns as struct that direction for admin proxy.
-func NewMinoAdminReverseProxy() *httputil.ReverseProxy {
-	director := func(r *http.Request) {
-		r.URL.Scheme = cfg.DestScheme()
-		r.URL.Host = fmt.Sprintf(cfg.DestHost())
-	}
-
-	return &httputil.ReverseProxy{Director: director}
-}
 
 // NewMinoBucketReverseProxy returns as struct that direction for bucket proxy.
 func NewMinoBucketReverseProxy() *httputil.ReverseProxy {
 	director := func(r *http.Request) {
-		r.URL.Scheme = cfg.DestScheme()
-		r.URL.Host = fmt.Sprintf(cfg.DestHost())
+		key := r.URL.Query().Get(authParam)
+
+		var g *gateway
+		json.Unmarshal(lib.DecryptAexHex(key), &g)
+
+		r.URL.Scheme = "http"
+		r.URL.Host = g.Node
 	}
 
 	return &httputil.ReverseProxy{Director: director}

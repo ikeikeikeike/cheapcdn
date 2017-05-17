@@ -10,6 +10,7 @@ type Node struct {
 
 	ID      int64     `pk:"autoincr"`
 	Objects []*Object `fk:"node_id"`
-	URL     string
-	Alive   bool
+	Host    string    `kallax:"host"`
+	Free    int64     `kallax:"free"`
+	Alive   bool      `kallax:"alive"`
 }

@@ -35,8 +35,10 @@ func (r *Node) ColumnAddress(col string) (interface{}, error) {
 		return &r.Timestamps.CreatedAt, nil
 	case "updated_at":
 		return &r.Timestamps.UpdatedAt, nil
-	case "url":
-		return &r.URL, nil
+	case "host":
+		return &r.Host, nil
+	case "free":
+		return &r.Free, nil
 	case "alive":
 		return &r.Alive, nil
 
@@ -54,8 +56,10 @@ func (r *Node) Value(col string) (interface{}, error) {
 		return r.Timestamps.CreatedAt, nil
 	case "updated_at":
 		return r.Timestamps.UpdatedAt, nil
-	case "url":
-		return r.URL, nil
+	case "host":
+		return r.Host, nil
+	case "free":
+		return r.Free, nil
 	case "alive":
 		return r.Alive, nil
 
@@ -531,10 +535,16 @@ func (q *NodeQuery) FindByUpdatedAt(cond kallax.ScalarCond, v time.Time) *NodeQu
 	return q.Where(cond(Schema.Node.UpdatedAt, v))
 }
 
-// FindByURL adds a new filter to the query that will require that
-// the URL property is equal to the passed value.
-func (q *NodeQuery) FindByURL(v string) *NodeQuery {
-	return q.Where(kallax.Eq(Schema.Node.URL, v))
+// FindByHost adds a new filter to the query that will require that
+// the Host property is equal to the passed value.
+func (q *NodeQuery) FindByHost(v string) *NodeQuery {
+	return q.Where(kallax.Eq(Schema.Node.Host, v))
+}
+
+// FindByFree adds a new filter to the query that will require that
+// the Free property is equal to the passed value.
+func (q *NodeQuery) FindByFree(cond kallax.ScalarCond, v int64) *NodeQuery {
+	return q.Where(cond(Schema.Node.Free, v))
 }
 
 // FindByAlive adds a new filter to the query that will require that
@@ -672,8 +682,8 @@ func (r *Object) ColumnAddress(col string) (interface{}, error) {
 		return &r.Timestamps.UpdatedAt, nil
 	case "node_id":
 		return types.Nullable(kallax.VirtualColumn("node_id", r, new(kallax.NumericID))), nil
-	case "url":
-		return &r.URL, nil
+	case "name":
+		return &r.Name, nil
 
 	default:
 		return nil, fmt.Errorf("kallax: invalid column in Object: %s", col)
@@ -691,8 +701,8 @@ func (r *Object) Value(col string) (interface{}, error) {
 		return r.Timestamps.UpdatedAt, nil
 	case "node_id":
 		return r.Model.VirtualColumn(col), nil
-	case "url":
-		return r.URL, nil
+	case "name":
+		return r.Name, nil
 
 	default:
 		return nil, fmt.Errorf("kallax: invalid column in Object: %s", col)
@@ -1078,10 +1088,10 @@ func (q *ObjectQuery) FindByNode(v int64) *ObjectQuery {
 	return q.Where(kallax.Eq(Schema.Object.NodeFK, v))
 }
 
-// FindByURL adds a new filter to the query that will require that
-// the URL property is equal to the passed value.
-func (q *ObjectQuery) FindByURL(v string) *ObjectQuery {
-	return q.Where(kallax.Eq(Schema.Object.URL, v))
+// FindByName adds a new filter to the query that will require that
+// the Name property is equal to the passed value.
+func (q *ObjectQuery) FindByName(v string) *ObjectQuery {
+	return q.Where(kallax.Eq(Schema.Object.Name, v))
 }
 
 // ObjectResultSet is the set of results returned by a query to the
@@ -1202,7 +1212,8 @@ type schemaNode struct {
 	ID        kallax.SchemaField
 	CreatedAt kallax.SchemaField
 	UpdatedAt kallax.SchemaField
-	URL       kallax.SchemaField
+	Host      kallax.SchemaField
+	Free      kallax.SchemaField
 	Alive     kallax.SchemaField
 }
 
@@ -1212,7 +1223,7 @@ type schemaObject struct {
 	CreatedAt kallax.SchemaField
 	UpdatedAt kallax.SchemaField
 	NodeFK    kallax.SchemaField
-	URL       kallax.SchemaField
+	Name      kallax.SchemaField
 }
 
 var Schema = &schema{
@@ -1231,13 +1242,15 @@ var Schema = &schema{
 			kallax.NewSchemaField("id"),
 			kallax.NewSchemaField("created_at"),
 			kallax.NewSchemaField("updated_at"),
-			kallax.NewSchemaField("url"),
+			kallax.NewSchemaField("host"),
+			kallax.NewSchemaField("free"),
 			kallax.NewSchemaField("alive"),
 		),
 		ID:        kallax.NewSchemaField("id"),
 		CreatedAt: kallax.NewSchemaField("created_at"),
 		UpdatedAt: kallax.NewSchemaField("updated_at"),
-		URL:       kallax.NewSchemaField("url"),
+		Host:      kallax.NewSchemaField("host"),
+		Free:      kallax.NewSchemaField("free"),
 		Alive:     kallax.NewSchemaField("alive"),
 	},
 	Object: &schemaObject{
@@ -1256,12 +1269,12 @@ var Schema = &schema{
 			kallax.NewSchemaField("created_at"),
 			kallax.NewSchemaField("updated_at"),
 			kallax.NewSchemaField("node_id"),
-			kallax.NewSchemaField("url"),
+			kallax.NewSchemaField("name"),
 		),
 		ID:        kallax.NewSchemaField("id"),
 		CreatedAt: kallax.NewSchemaField("created_at"),
 		UpdatedAt: kallax.NewSchemaField("updated_at"),
 		NodeFK:    kallax.NewSchemaField("node_id"),
-		URL:       kallax.NewSchemaField("url"),
+		Name:      kallax.NewSchemaField("name"),
 	},
 }
