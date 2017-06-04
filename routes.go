@@ -20,5 +20,9 @@ func routes() *echo.Echo {
 		},
 	}))
 
+	e.GET("/ping", func(c echo.Context) error {
+		return c.String(200, "ok")
+	})
+
 	return e
 }
