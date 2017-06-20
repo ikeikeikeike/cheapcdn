@@ -48,12 +48,10 @@ func validator(ctx echo.Context, key string) bool {
 	if !strings.HasSuffix(g.File, filepath.Base(ctx.Request().URL.Path)) {
 		return false
 	}
-	// if g.IPAddr != ctx.RealIP() {
-	// return false
-	// }
-
-	log.Printf("%s == %s", g.IPAddr, ctx.RealIP())
-
+	if g.IPAddr != ctx.RealIP() {
+		log.Printf("[doesnt match] %s and %s", g.IPAddr, ctx.RealIP())
+		return false
+	}
 	t1, err := time.Parse(lib.TF, g.Time)
 	if err != nil {
 		return false
