@@ -3,6 +3,7 @@ package minio
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -47,9 +48,12 @@ func validator(ctx echo.Context, key string) bool {
 	if !strings.HasSuffix(g.File, filepath.Base(ctx.Request().URL.Path)) {
 		return false
 	}
-	if g.IPAddr != ctx.RealIP() {
-		return false
-	}
+	// if g.IPAddr != ctx.RealIP() {
+	// return false
+	// }
+
+	log.Printf("%s == %s", g.IPAddr, ctx.RealIP())
+
 	t1, err := time.Parse(lib.TF, g.Time)
 	if err != nil {
 		return false
