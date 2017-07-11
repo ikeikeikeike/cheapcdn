@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"time"
 
 	_ "github.com/lib/pq"
 
@@ -29,6 +30,10 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("It was unable to connect to the DB.\n%s\n", err))
 	}
+	db.SetConnMaxLifetime(time.Minute * 10)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
+	defer db.Close()
 
 	cfg := &config.Config{
 		Src:         *src,
