@@ -3,7 +3,6 @@ package minio
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -38,30 +37,32 @@ func keyAuth() echo.MiddlewareFunc {
 // _, b := ctx.(*lib.CacheContext).Store.Get(key)
 // if !b { return false }
 func validator(ctx echo.Context, key string) bool {
+	log := ctx.Logger()
+
 	var g *gateway
 
 	bytes := lib.DecryptAexHex(key)
 	if err := json.Unmarshal(bytes, &g); err != nil {
-		log.Printf("[json unmarshal]")
+		log.Warnf("[json unmarshal]")
 		return false
 	}
 
 	if !strings.HasSuffix(g.File, filepath.Base(ctx.Request().URL.Path)) {
-		log.Printf("[doesnt match suffix]")
+		log.Warnf("[doesnt match suffix]")
 		return false
 	}
 	if g.IPAddr != ctx.RealIP() {
-		log.Printf("[doesnt match] %s and %s", g.IPAddr, ctx.RealIP())
-		return false
+		log.Warnf("[doesnt match] %s and %s", g.IPAddr, ctx.RealIP())
+		// return false
 	}
 	t1, err := time.Parse(lib.TF, g.Time)
 	if err != nil {
-		log.Printf("[doesnt parse time]")
+		log.Warnf("[doesnt parse time]")
 		return false
 	}
 	t2 := time.Now().UTC()
 	if t1.Add(1*time.Hour).UnixNano() < t2.UnixNano() {
-		log.Printf("[doesnt match time]")
+		log.Warnf("[doesnt match time] %s", ctx.RealIP())
 		return false
 	}
 
