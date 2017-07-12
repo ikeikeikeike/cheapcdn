@@ -42,10 +42,12 @@ func validator(ctx echo.Context, key string) bool {
 
 	bytes := lib.DecryptAexHex(key)
 	if err := json.Unmarshal(bytes, &g); err != nil {
+		log.Printf("[json unmarshal]")
 		return false
 	}
 
 	if !strings.HasSuffix(g.File, filepath.Base(ctx.Request().URL.Path)) {
+		log.Printf("[doesnt match suffix]")
 		return false
 	}
 	if g.IPAddr != ctx.RealIP() {
@@ -54,10 +56,12 @@ func validator(ctx echo.Context, key string) bool {
 	}
 	t1, err := time.Parse(lib.TF, g.Time)
 	if err != nil {
+		log.Printf("[doesnt parse time]")
 		return false
 	}
 	t2 := time.Now().UTC()
 	if t1.Add(1*time.Hour).UnixNano() < t2.UnixNano() {
+		log.Printf("[doesnt match time]")
 		return false
 	}
 
