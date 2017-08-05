@@ -61,7 +61,7 @@ func validator(ctx echo.Context, key string) bool {
 		return false
 	}
 	t2 := time.Now().UTC()
-	if t1.Add(1*time.Hour).UnixNano() < t2.UnixNano() {
+	if t1.Add(2*time.Hour).UnixNano() < t2.UnixNano() {
 		log.Warnf("[doesnt match time] %s", ctx.RealIP())
 		return false
 	}
