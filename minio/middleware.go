@@ -55,6 +55,9 @@ func validator(ctx echo.Context, key string) bool {
 		log.Warnf("[doesnt match] %s and %s", g.IPAddr, ctx.RealIP())
 		return false
 	}
+
+	log.Infof("IPADDR %s and %s", g.IPAddr, ctx.RealIP())
+
 	t1, err := time.Parse(lib.TF, g.Time)
 	if err != nil {
 		log.Warnf("[doesnt parse time]")
