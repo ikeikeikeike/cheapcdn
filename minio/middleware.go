@@ -56,7 +56,7 @@ func validator(ctx echo.Context, key string) bool {
 		return false
 	}
 
-	log.Infof("IPADDR %s and %s", g.IPAddr, ctx.RealIP())
+	log.Warnf("IPADDR %s and %s", g.IPAddr, ctx.RealIP())
 
 	t1, err := time.Parse(lib.TF, g.Time)
 	if err != nil {
