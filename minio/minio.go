@@ -20,6 +20,7 @@ func NewMinoBucketReverseProxy() *httputil.ReverseProxy {
 		u, _ := url.Parse(g.Node)
 		r.URL.Scheme = u.Scheme
 		r.URL.Host = u.Host
+		r.Host = u.Host
 	}
 
 	return &httputil.ReverseProxy{Director: director}

@@ -8,9 +8,10 @@ type Node struct {
 	kallax.Model `table:"nodes"`
 	kallax.Timestamps
 
-	ID      int64     `pk:"autoincr"`
-	Objects []*Object `fk:"node_id"`
-	Host    string    `kallax:"host"`
-	Free    int64     `kallax:"free"`
-	Alive   bool      `kallax:"alive"`
+	ID       int64     `pk:"autoincr"`
+	Objects  []*Object `fk:"node_id"`
+	Host     string    `kallax:"host"`
+	Free     int64     `kallax:"free"`
+	Alive    bool      `kallax:"alive"`
+	Provider string    `kallax:"provider"`
 }
