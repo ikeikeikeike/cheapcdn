@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httputil"
+	"net/url"
 
 	"github.com/ikeikeikeike/cheapcdn/lib"
 )
@@ -16,8 +17,9 @@ func NewMinoBucketReverseProxy() *httputil.ReverseProxy {
 		var g *gateway
 		json.Unmarshal(lib.DecryptAexHex(key), &g)
 
-		r.URL.Scheme = "http"
-		r.URL.Host = g.Node
+		u, _ := url.Parse(g.Node)
+		r.URL.Scheme = u.Scheme
+		r.URL.Host = u.Host
 	}
 
 	return &httputil.ReverseProxy{Director: director}
